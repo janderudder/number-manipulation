@@ -114,6 +114,11 @@ class HandleError:
 ## ~-=^°~#
 if __name__ == '__main__':
 
+    for arg in sys.argv:
+        if arg == '--help' or arg == '-h' or arg == '-?':
+            help()
+            exit()
+
     if len(sys.argv) < 4:
         exit(HandleError.argCount())
 
