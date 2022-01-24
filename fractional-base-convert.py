@@ -51,10 +51,8 @@ def euclidianFrac(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
 
 def convert(value, outBase, digitCount):
     fracPart = decompose(value)[1]
-    results = euclidianFrac(fracPart,outBase,digitCount)
-    symbols = []
-    for n in results:
-        symbols.append(toSymbol(n))
+    digits = euclidianFrac(fracPart,outBase,digitCount)
+    symbols = map(toSymbol, digits)
     return ''.join(symbols)
 
 
