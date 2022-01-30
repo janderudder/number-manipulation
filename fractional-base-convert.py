@@ -4,21 +4,24 @@ import math
 import sys
 
 
+## Help and messages utils
 def programLaunchCommand():
     return 'python3 '+path.basename(sys.argv[0])
 
 
 def help():
-    print("""Usage: <section not written yet>""")
+    print("""Usage:
+
+  $ {} <VALUE> <INPUT_BASE> <OUTPUT_BASE>
+
+        VALUE must be a fractional part."""
+    .format(programLaunchCommand()))
 
 
+
+## Input error checking
 def isValidBase(base):
     return base > 1 and base < 37
-
-
-def toSymbol(n: int) -> str:
-    if n<10: return str(n)
-    return chr(55+n)
 
 
 def errorArgCount() -> int:
@@ -33,30 +36,57 @@ def errorBaseRange(name, value) -> int:
     return -2
 
 
-def decompose(value):
-    intPart = math.floor(value)
-    fracPart= value-intPart
-    return (intPart, fracPart)
+
+## Number and numeric string manipulation
+def toSymbol(n: int) -> str:
+    if n<10: return str(n)
+    return chr(55+n)
 
 
-def euclidianFrac(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
+def fromSymbol(symbol):
+    value = ord(symbol)
+    if value > 90:
+        return value-87
+    elif value > 65:
+        return value-55
+    else:
+        return value-48
+
+
+def toBase10(string, inBase) -> float:
+    value = 0.0
+    for i,symbol in enumerate(string):
+        value += fromSymbol(symbol) * inBase**(-1-i)
+    return value
+
+
+
+## Main algorithm
+def euclidian_f(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
     intProducts = []
-    for i in range(digitCountMax):
-        if fracPart==0: break
-        fracPart *= outBase
-        intPart,fracPart = decompose(fracPart)
+    value = fracPart
+    for _ in range(digitCountMax):
+        if value==0: break
+        value *= outBase
+        intPart = int(value)
         intProducts.append(intPart)
+        value -= intPart
     return intProducts
 
 
-def convert(value, outBase, digitCount):
-    fracPart = decompose(value)[1]
-    digits = euclidianFrac(fracPart,outBase,digitCount)
+
+## Algo driver function
+def convert(valueString, inBase, outBase):
+    valueB10 = toBase10(valueString, inBase)
+    if outBase == 10:
+        return valueB10
+    digits = euclidian_f(valueB10, outBase)
     symbols = map(toSymbol, digits)
     return ''.join(symbols)
 
 
 
+## Global driver function
 if __name__ == '__main__':
 
     for arg in sys.argv:
@@ -64,25 +94,16 @@ if __name__ == '__main__':
             help()
             exit()
 
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         exit(errorArgCount())
 
-    outBase = int(sys.argv[2])
+    inBase = int(sys.argv[2])
+    outBase = int(sys.argv[3])
+
+    if not isValidBase(inBase):
+        exit(errorBaseRange('input', inBase))
 
     if not isValidBase(outBase):
         exit(errorBaseRange('output', outBase))
 
-    if (len(sys.argv) < 4):
-        digitCount = 12
-    else:
-        digitCount = int(sys.argv[3])
-
-    try:
-        inputBase10 = float(sys.argv[1])
-    except ValueError as e:
-        print(e)
-        exit(-3)
-    except:
-        exit(-4)
-
-    print(convert(inputBase10, outBase, digitCount))
+    print(convert(sys.argv[1], inBase, outBase))
