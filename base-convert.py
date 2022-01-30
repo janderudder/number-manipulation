@@ -49,10 +49,22 @@ def toSymbol(n: int) -> str:
 
 
 ## value -> (integral part, fractional part)
-def decompose(value):
+def decomposeNumber(value):
     intPart = math.floor(value)
     fracPart= value-intPart
     return (intPart, fracPart)
+
+
+
+## string -> (integral part, fractional part)
+def decomposeString(string, base):
+    comaPos = string.find('.')
+    if comaPos == -1:
+        string.find(',')
+    if comaPos != -1:
+        return (int(string[:comaPos], base), float('0.'+string[comaPos+1:]))
+    else:
+        return (int(string, base), float(0.0))
 
 
 
@@ -72,7 +84,7 @@ def euclidianFrac(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
     integralProducts = []
     for i in range(digitCountMax):
         if fracPart==0: break
-        intPart,fracPart = decompose(fracPart * outBase)
+        intPart,fracPart = decomposeNumber(fracPart * outBase)
         integralProducts.append(intPart)
     return integralProducts
 
@@ -89,7 +101,7 @@ def convertInt(value: int, outBase: int, digitCountMax) -> str:
 
 ## driver subprogram for the euclidian algorithm (fractional)
 def convertFrac(value: float, outBase: int, digitCountMax) -> str:
-    fracPart = decompose(value)[1]
+    fracPart = decomposeNumber(value)[1]
     digits = euclidianFrac(fracPart, outBase, digitCountMax)
     symbols = map(toSymbol, digits)
     return ''.join(symbols)
@@ -130,17 +142,25 @@ if __name__ == '__main__':
     elif not isValidBase(outBase):
         exit(HandleError.baseRange('output', outBase))
 
-    try:
-        inputValue = float(sys.argv[1])
 
-    except ValueError as ex:
-        print(ex)
-        exit(-1)
+    intPart,fracPart = (0, 0.0)
 
-    intPart, fracPart = decompose(inputValue)
+    if inBase == 10:
+        try:
+            intPart, fracPart = decomposeNumber(float(sys.argv[1]))
+        except ValueError as ex:
+            print(ex)
+            exit(-1)
+    else:
+        try:
+            intPart, fracPart = decomposeString(sys.argv[1], inBase)
+        except ValueError as ex:
+            print(ex)
+            exit(-3)
 
-    intResult  = convertInt(intPart,outBase,16)
-    fracResult = convertFrac(fracPart,outBase,12)
+
+    intResult  = convertInt(intPart, outBase, 16)
+    fracResult = convertFrac(fracPart, outBase, 12)
 
     if not fracResult:
         print(intResult)

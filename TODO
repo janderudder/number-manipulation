@@ -1,0 +1,3 @@
+fractional-base-convert and base-convert are unfinished
+the floating point value of the fractionary part of the input must be always represented in base 10 throughout the program
+Must find a way to manipulate the fractional part despite the absence of a floatconstructor taking a base parameter

@@ -51,6 +51,7 @@ def toSymbol(n: int) -> str:
 def convert(value, outBase) -> str:
     digits = euclidianInt(value, outBase)
     digits.reverse()
+    print('digits:', digits)
     symbols = map(toSymbol, digits)
     return ''.join(symbols)
 
