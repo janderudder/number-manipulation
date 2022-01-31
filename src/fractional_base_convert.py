@@ -1,6 +1,5 @@
 from typing import List
 from os import path
-import math
 import sys
 
 
@@ -47,7 +46,7 @@ def fromSymbol(symbol):
     value = ord(symbol)
     if value > 90:
         return value-87
-    elif value > 65:
+    elif value > 64:
         return value-55
     else:
         return value-48
@@ -78,8 +77,6 @@ def euclidian_f(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
 ## Algo driver function
 def convert(valueString, inBase, outBase):
     valueB10 = toBase10(valueString, inBase)
-    if outBase == 10:
-        return valueB10
     digits = euclidian_f(valueB10, outBase)
     symbols = map(toSymbol, digits)
     return ''.join(symbols)

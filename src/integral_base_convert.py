@@ -35,7 +35,7 @@ def isValidBase(base):
     return base > 1 and base < 37
 
 
-def euclidianInt(value: int, outBase: int) -> List[int]:
+def euclidian(value: int, outBase: int) -> List[int]:
     remaining = []
     while value != 0:
         remaining.append(value % outBase)
@@ -49,9 +49,8 @@ def toSymbol(n: int) -> str:
 
 
 def convert(value, outBase) -> str:
-    digits = euclidianInt(value, outBase)
+    digits = euclidian(value, outBase)
     digits.reverse()
-    print('digits:', digits)
     symbols = map(toSymbol, digits)
     return ''.join(symbols)
 
