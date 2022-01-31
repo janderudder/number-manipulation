@@ -62,6 +62,7 @@ def toBase10(string, inBase) -> float:
 
 ## Main algorithm
 def euclidian_f(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
+    if fracPart == 0.0: return [0]
     intProducts = []
     value = fracPart
     for _ in range(digitCountMax):
@@ -75,7 +76,7 @@ def euclidian_f(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
 
 
 ## Algo driver function
-def convert(valueString, inBase, outBase):
+def convert(valueString, inBase, outBase) -> str:
     valueB10 = toBase10(valueString, inBase)
     digits = euclidian_f(valueB10, outBase)
     symbols = map(toSymbol, digits)

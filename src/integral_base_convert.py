@@ -36,6 +36,7 @@ def isValidBase(base):
 
 
 def euclidian(value: int, outBase: int) -> List[int]:
+    if value == 0: return [0]
     remaining = []
     while value != 0:
         remaining.append(value % outBase)
