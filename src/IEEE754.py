@@ -19,7 +19,7 @@ class IEEE754_32():
     def __init__(self, sign, exponent, mantissa) -> None:
         self._sign = int(sign)
         self._exponent = exponent
-        self._mantis = mantissa
+        self._mantissa = mantissa
 
     def sign(self):
         return self._sign
@@ -28,10 +28,13 @@ class IEEE754_32():
         return self._exponent
 
     def mantissa(self):
-        return self._mantis
+        return self._mantissa
 
     def value(self):
         return (
             (-1)**self._sign
             * 2**(self._exponent - IEEE754_32.EXPONENT_BIAS)
-            * self._mantis)
+            * self._mantissa)
+
+    def unbiasedExponent(self):
+        return self._exponent-IEEE754_32.EXPONENT_BIAS
