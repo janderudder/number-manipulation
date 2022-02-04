@@ -16,7 +16,7 @@ class IEEE754_32():
         exp += IEEE754_32.EXPONENT_BIAS
         return IEEE754_32(sign, exp, mantissa)
 
-    def __init__(self, sign, exponent, mantissa) -> None:
+    def __init__(self, sign: int, exponent: int, mantissa: int) -> None:
         self._sign = int(sign)
         self._exponent = exponent
         self._mantissa = mantissa
