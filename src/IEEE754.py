@@ -1,5 +1,6 @@
-from typing import Tuple
 from typing_extensions import Self
+from integral_base_convert import convert as convert_i
+from fractional_base_convert import convertString as convert_f
 
 
 class IEEE754_32():
@@ -13,19 +14,33 @@ class IEEE754_32():
         while int(mantissa) > 1:
             mantissa /= 2
             exp += 1
-        exp += IEEE754_32.EXPONENT_BIAS
-        return IEEE754_32(sign, exp, mantissa)
+        mantissa = mantissa if mantissa<1.0 else mantissa-1.0
+        mantissa = round(mantissa, 7)
+        biasedExponent = exp + IEEE754_32.EXPONENT_BIAS
+        return IEEE754_32(sign, biasedExponent, mantissa)
 
-    def __init__(self, sign: int, exponent: int, mantissa: int) -> None:
-        self._sign = int(sign)
-        self._exponent = exponent
+    def fromIntegral(intVal):
+        sign = intVal >> 31
+        biasedExponent = (intVal>>23) & 0xff
+        intMantissa = convert_i(intVal & 0x7fffff, 2)
+        while len(intMantissa)<23:
+            intMantissa = '0'+intMantissa
+        fMantissa = '.' + convert_f(intMantissa, 2, 10, 23)
+        return IEEE754_32(sign, biasedExponent, float(fMantissa))
+
+    def __init__(self, sign: int, biasedExponent: int, mantissa: float) -> None:
+        self._sign = sign
+        self._biasedExponent = biasedExponent
         self._mantissa = mantissa
 
     def sign(self):
         return self._sign
 
-    def exponent(self):
-        return self._exponent
+    def exponentBiased(self):
+        return self._biasedExponent
+
+    def exponentUnbiased(self):
+        return self._biasedExponent-IEEE754_32.EXPONENT_BIAS
 
     def mantissa(self):
         return self._mantissa
@@ -33,8 +48,6 @@ class IEEE754_32():
     def value(self):
         return (
             (-1)**self._sign
-            * 2**(self._exponent - IEEE754_32.EXPONENT_BIAS)
-            * self._mantissa)
-
-    def unbiasedExponent(self):
-        return self._exponent-IEEE754_32.EXPONENT_BIAS
+            * (2**self.exponentUnbiased())
+            * (1.0+self._mantissa)
+        )
