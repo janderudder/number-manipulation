@@ -11,9 +11,16 @@ def programLaunchCommand():
 def help():
     print("""Usage:
 
-  $ {} <VALUE> <INPUT_BASE> <OUTPUT_BASE>
+  $ {0} <VALUE> <INPUT_BASE> <OUTPUT_BASE>
 
-        VALUE must be a fractional part."""
+  VALUE must be a fractional part.
+
+Example:
+
+  To convert decimal 0.625 to hex, input:
+
+  $ {0} 625 10 16
+        """
     .format(programLaunchCommand()))
 
 
@@ -36,7 +43,7 @@ def errorBaseRange(name, value) -> int:
 
 
 
-## Number and numeric string manipulation
+## Number, list and numeric-string manipulation helpers
 def toSymbol(n: int) -> str:
     if n<10: return str(n)
     return chr(55+n)
@@ -52,39 +59,51 @@ def fromSymbol(symbol):
         return value-48
 
 
-def toBase10(string, inBase) -> float:
+def strToBase10_f(string, inBase) -> float:
+    if inBase==10:
+        return float('.'+string)
     value = 0.0
     for i,symbol in enumerate(string):
         value += fromSymbol(symbol) * inBase**(-1-i)
     return value
 
 
+def removeTrailingZeros(digits: List[int]) -> List[int]:
+    digits.reverse()
+    index = 0
+    for digit in digits:
+        if digit != 0: break
+        else: index+=1
+    digits.reverse()
+    return digits[:len(digits)-index]
 
-## Main algorithm
-def euclidian_f(fracPart: float, outBase: int, digitCountMax=12) -> List[int]:
+
+
+## Principal algorithm
+def euclidian_f(fracPart: float, outBase: int, digitCountMax) -> List[int]:
     if fracPart == 0.0: return [0]
-    intProducts = []
+    productsUnits = []
     value = fracPart
     for _ in range(digitCountMax):
         if value==0: break
         value *= outBase
         intPart = int(value)
-        intProducts.append(intPart)
+        productsUnits.append(intPart)
         value -= intPart
-    return intProducts
+    return productsUnits
 
 
-
-## Algo driver function
-def convert(valueString, inBase, outBase) -> str:
-    valueB10 = toBase10(valueString, inBase)
-    digits = euclidian_f(valueB10, outBase)
+## Logic driver function
+def convert(valueString, inBase, outBase, digitsCountMax) -> str:
+    valueB10 = strToBase10_f(valueString, inBase)
+    digits = euclidian_f(valueB10, outBase, digitsCountMax)
+    digits = removeTrailingZeros(digits) if len(digits)>1 else digits
     symbols = map(toSymbol, digits)
     return ''.join(symbols)
 
 
 
-## Global driver function
+## CLI driver function
 if __name__ == '__main__':
 
     for arg in sys.argv:
@@ -104,4 +123,4 @@ if __name__ == '__main__':
     if not isValidBase(outBase):
         exit(errorBaseRange('output', outBase))
 
-    print(convert(sys.argv[1], inBase, outBase))
+    print(convert(sys.argv[1], inBase, outBase, 23))
