@@ -1,19 +1,8 @@
-from fractional_base_convert import euclidian_f, convert as convert_f, fromSymbol
-from integral_base_convert import euclidian as euclidian_i, convert as convert_i, isValidBase
+from typing import Tuple
 from os import path
 import sys
-
-
-
-# string -> (integral part, fractional part)
-def decomposeString(strVal, base):
-    comaPos = strVal.find('.')
-    if comaPos == -1:
-        strVal.find(',')
-    if comaPos != -1:
-        return (int(strVal[:comaPos], base), strVal[comaPos+1:])
-    else:
-        return (int(strVal, base), '0.0')
+from fractional_base_convert import convert as convert_f
+from integral_base_convert import convert as convert_i, isValidBase
 
 
 
@@ -21,9 +10,20 @@ def programLaunchCommand():
     return 'python3 '+path.basename(sys.argv[0])
 
 
-
 def help():
-    print('<help>')
+    print('<help: should write that at some point>')
+
+
+
+# string -> (integral part, fractional part)
+def decomposeNumber(valueString: str) -> Tuple[str, str]:
+    parts = valueString.partition('.')
+    if parts[1] != '.':
+        parts = valueString.partition(',')
+    if parts[2] == '':
+        return (parts[0], '0')
+    return (parts[0], parts[2])
+
 
 
 
@@ -34,7 +34,7 @@ class HandleError:
         print(f"For more info please enter: $ {programLaunchCommand()} --help")
         return -2
 
-    def baseRange(name, value) -> int:
+    def baseRange(name: str, value: int) -> int:
         print(f"Error: the {name} base is invalid ({value}).")
         print("Valid range: [2, 36].")
         return -3
@@ -59,12 +59,10 @@ if __name__ == '__main__':
     elif not isValidBase(outBase):
         exit(HandleError.baseRange('output', outBase))
 
-    intPart,fracPart = decomposeString(sys.argv[1], inBase)
+    intPart,fracPart = decomposeNumber(sys.argv[1])
 
-    print(intPart, fracPart)
-
-    intResult  = convert_i(intPart, outBase)
-    fracResult = convert_f(fracPart, outBase, 12)
+    intResult  = convert_i(int(intPart), outBase)
+    fracResult = convert_f(fracPart, inBase, outBase, 23)
 
     if not fracResult:
         print(intResult)
