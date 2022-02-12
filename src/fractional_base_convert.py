@@ -49,7 +49,7 @@ def toSymbol(n: int) -> str:
     return chr(55+n)
 
 
-def fromSymbol(symbol):
+def fromSymbol(symbol: str):
     value = ord(symbol)
     if value > 90:
         return value-87
@@ -59,7 +59,7 @@ def fromSymbol(symbol):
         return value-48
 
 
-def strToBase10_f(string, inBase) -> float:
+def strToBase10_f(string: str, inBase: int) -> float:
     if inBase==10:
         return float('.'+string)
     value = 0.0
@@ -94,7 +94,7 @@ def euclidian_f(fracPart: float, outBase: int, digitCountMax) -> List[int]:
 
 
 ## Logic driver function
-def convert(valueString, inBase, outBase, digitsCountMax) -> str:
+def convert(valueString: str, inBase: int, outBase: int, digitsCountMax: int) -> str:
     valueB10 = strToBase10_f(valueString, inBase)
     digits = euclidian_f(valueB10, outBase, digitsCountMax)
     digits = removeTrailingZeros(digits) if len(digits)>1 else digits
