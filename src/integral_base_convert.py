@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from os import path
 import sys
 
@@ -31,12 +31,13 @@ Note:
 """.format(programLaunchCommand()))
 
 
-def isValidBase(base):
+def isValidBase(base: int):
     return base > 1 and base < 37
 
 
 def euclidian(value: int, outBase: int) -> List[int]:
-    if value == 0: return [0]
+    if value==0:
+        return [0]
     remaining = []
     while value != 0:
         remaining.append(value % outBase)
@@ -49,7 +50,7 @@ def toSymbol(n: int) -> str:
     return chr(55+n)
 
 
-def convert(value, outBase) -> str:
+def convert(value: int, outBase: int) -> str:
     digits = euclidian(value, outBase)
     digits.reverse()
     symbols = map(toSymbol, digits)
@@ -62,7 +63,7 @@ def errorArgCount() -> int:
     return -1
 
 
-def errorBaseRange(name, value) -> int:
+def errorBaseRange(name: str, value: Union[int, str]) -> int:
     print(f"Error: the {name} base is invalid ({value}).")
     print("Valid range: [2, 36].")
     return -2
