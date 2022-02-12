@@ -22,11 +22,9 @@ class IEEE754_32():
     def fromIntegral(intVal):
         sign = intVal >> 31
         biasedExponent = (intVal>>23) & 0xff
-        intMantissa = convert_i(intVal & 0x7fffff, 2)
-        while len(intMantissa)<23:
-            intMantissa = '0'+intMantissa
-        fMantissa = float('.'+convert_f(intMantissa, 2, 10, 23))
-        return IEEE754_32(sign, biasedExponent, fMantissa)
+        mantissaStr_int = '{:0>23}'.format(convert_i(intVal & 0x7fffff, 2))
+        mantissaStr_float = '.'+convert_f(mantissaStr_int, 2, 10, 23)
+        return IEEE754_32(sign, biasedExponent, float(mantissaStr_float))
 
     def __init__(self, sign: int, biasedExponent: int, mantissa: float) -> None:
         self._sign = sign
