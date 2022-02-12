@@ -1,7 +1,7 @@
 from typing import Tuple
 from os import path
 import sys
-from fractional_base_convert import convert as convert_f
+from fractional_base_convert import convertString as convert_f
 from integral_base_convert import convert as convert_i, isValidBase
 
 

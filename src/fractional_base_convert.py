@@ -1,5 +1,3 @@
-from audioop import reverse
-from types import TracebackType
 from typing import List
 from os import path
 import sys
@@ -97,13 +95,23 @@ def euclidian_f(fracPart: float, outBase: int, digitCountMax) -> List[int]:
     return productsUnits
 
 
+
 ## Logic driver function
-def convert(valueString: str, inBase: int, outBase: int, digitsCountMax: int) -> str:
-    valueB10 = strToBase10_f(valueString, inBase)
-    digits = euclidian_f(valueB10, outBase, digitsCountMax)
+## @param value should be of form 0.xxxx
+def convert(value: float, outBase: int, digitsCountMax: int) -> str:
+    if value >= 1.0:
+        raise ValueError(f"fractional part value must be < 1 ({value} given).")
+    digits = euclidian_f(value, outBase, digitsCountMax)
     digits = removeTrailingZeros(digits) if len(digits)>1 else digits
     symbols = map(toSymbol, digits)
     return ''.join(symbols)
+
+
+
+## even higher level driver
+def convertString(valueString: str, inBase: int, outBase: int, digitsCountMax: int) -> str:
+    value = strToBase10_f(valueString, inBase)
+    return convert(value, outBase, digitsCountMax)
 
 
 
@@ -128,7 +136,7 @@ if __name__ == '__main__':
         exit(errorBaseRange('output', outBase))
 
     try:
-        print(convert(sys.argv[1], inBase, outBase, 23))
+        print(convertString(sys.argv[1], inBase, outBase, 23))
 
     except Exception as ex:
         print(ex)
