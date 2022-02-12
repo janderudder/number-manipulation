@@ -25,8 +25,8 @@ class IEEE754_32():
         intMantissa = convert_i(intVal & 0x7fffff, 2)
         while len(intMantissa)<23:
             intMantissa = '0'+intMantissa
-        fMantissa = '.' + convert_f(intMantissa, 2, 10, 23)
-        return IEEE754_32(sign, biasedExponent, float(fMantissa))
+        fMantissa = float('.'+convert_f(intMantissa, 2, 10, 23))
+        return IEEE754_32(sign, biasedExponent, fMantissa)
 
     def __init__(self, sign: int, biasedExponent: int, mantissa: float) -> None:
         self._sign = sign
