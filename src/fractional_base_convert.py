@@ -1,3 +1,5 @@
+from audioop import reverse
+from types import TracebackType
 from typing import List
 from os import path
 import sys
@@ -49,14 +51,14 @@ def toSymbol(n: int) -> str:
     return chr(55+n)
 
 
-def fromSymbol(symbol: str):
-    value = ord(symbol)
-    if value > 90:
-        return value-87
-    elif value > 64:
-        return value-55
+def toValue(symbol: str):
+    code = ord(symbol)
+    if code > 90:
+        return code-87
+    elif code > 64:
+        return code-55
     else:
-        return value-48
+        return code-48
 
 
 def strToBase10_f(string: str, inBase: int) -> float:
@@ -64,24 +66,26 @@ def strToBase10_f(string: str, inBase: int) -> float:
         return float('.'+string)
     value = 0.0
     for i,symbol in enumerate(string):
-        value += fromSymbol(symbol) * inBase**(-1-i)
+        symbolValue = toValue(symbol)
+        if symbolValue>=inBase:
+            raise ValueError(f"Symbol out of base range: symbol {symbol}, base {inBase}")
+        value += symbolValue * inBase**(-1-i)
     return value
 
 
 def removeTrailingZeros(digits: List[int]) -> List[int]:
-    digits.reverse()
     index = 0
-    for digit in digits:
+    for digit in reversed(digits):
         if digit != 0: break
         else: index+=1
-    digits.reverse()
     return digits[:len(digits)-index]
 
 
 
 ## Principal algorithm
 def euclidian_f(fracPart: float, outBase: int, digitCountMax) -> List[int]:
-    if fracPart == 0.0: return [0]
+    if fracPart == 0.0:
+        return [0]
     productsUnits = []
     value = fracPart
     for _ in range(digitCountMax):
@@ -123,4 +127,9 @@ if __name__ == '__main__':
     if not isValidBase(outBase):
         exit(errorBaseRange('output', outBase))
 
-    print(convert(sys.argv[1], inBase, outBase, 23))
+    try:
+        print(convert(sys.argv[1], inBase, outBase, 23))
+
+    except Exception as ex:
+        print(ex)
+        exit(-1)
