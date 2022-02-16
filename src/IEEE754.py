@@ -43,7 +43,7 @@ class IEEE754_32():
         return self._exponentBiased-IEEE754_32.EXPONENT_BIAS
 
     def mantissa(self):
-        return self._mantissa
+        return (1.0 if self.isNormalized() else 0.0) + self._mantissa
 
     def isNormalized(self):
         return not (self._exponentBiased==0 and self._mantissa!=0)
@@ -58,5 +58,5 @@ class IEEE754_32():
         return (
             (-1)**self._sign
             * (2**self.exponentUnbiased())
-            * ((1.0 if self.isNormalized() else 0.0) + self._mantissa)
+            * self.mantissa()
         )
