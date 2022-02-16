@@ -2,6 +2,7 @@ from math import inf, nan
 from typing_extensions import Self
 from integral_base_convert import convert as convert_i
 from fractional_base_convert import convertString as convert_f
+from base_convert import decomposeNumber
 
 
 class IEEE754_32():
@@ -60,3 +61,13 @@ class IEEE754_32():
             * (2**self.exponentUnbiased())
             * self.mantissa()
         )
+
+    def mantissaFracPart(self) -> str:
+        return decomposeNumber(str(self._mantissa))[1]
+
+    def storedIntegral(self):
+        bin = self._sign << 31
+        bin |= self._exponentBiased << 23
+        mantissaBin = convert_f(self.mantissaFracPart(), 10, 2, 23)
+        bin |= int(mantissaBin, 2)
+        return bin
